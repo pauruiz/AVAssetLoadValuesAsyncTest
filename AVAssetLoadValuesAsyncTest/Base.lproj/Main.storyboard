@@ -1,26 +1,95 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11134" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina3_5" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11106"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="AVAssetLoadValuesAsyncTest" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Media URL:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kdu-kJ-orC">
+                                <rect key="frame" x="16" y="30" width="88" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2dt-7Q-VjU">
+                                <rect key="frame" x="16" y="75.5" width="116" height="30"/>
+                                <state key="normal" title="Known 200 page"/>
+                                <connections>
+                                    <action selector="fillWith200Page:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ygN-Jw-rmh"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hv6-Pj-W5N">
+                                <rect key="frame" x="150" y="75.5" width="154" height="30"/>
+                                <state key="normal" title="Known 404 error page"/>
+                                <connections>
+                                    <action selector="fillWith403Page:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0ic-G2-M3Q"/>
+                                </connections>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="AZy-Xe-13j">
+                                <rect key="frame" x="8" y="175.5" width="304" height="296.5"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wWf-HJ-aeu">
+                                <rect key="frame" x="16" y="125.5" width="288" height="30"/>
+                                <state key="normal" title="Try loadValuesAsynchronously for media"/>
+                                <connections>
+                                    <action selector="tryLoadValuesAsynchronouslyForMedia:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zGz-Wf-Vwk"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mvb-mA-uE7">
+                                <rect key="frame" x="114" y="25.5" width="196" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Hv6-Pj-W5N" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="2dt-7Q-VjU" secondAttribute="trailing" constant="10" id="1GJ-8Z-wz5"/>
+                            <constraint firstItem="wWf-HJ-aeu" firstAttribute="trailing" secondItem="Hv6-Pj-W5N" secondAttribute="trailing" id="1b8-2a-E50"/>
+                            <constraint firstAttribute="trailing" secondItem="AZy-Xe-13j" secondAttribute="trailing" constant="8" id="5Rc-Z6-rdf"/>
+                            <constraint firstItem="AZy-Xe-13j" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="8" id="AlF-oK-7ad"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="AZy-Xe-13j" secondAttribute="bottom" constant="8" id="BNm-yL-Bnl"/>
+                            <constraint firstAttribute="trailing" secondItem="Hv6-Pj-W5N" secondAttribute="trailing" constant="16" id="Be9-k2-Ivi"/>
+                            <constraint firstItem="Hv6-Pj-W5N" firstAttribute="top" secondItem="mvb-mA-uE7" secondAttribute="bottom" constant="20" id="Mff-dV-KHQ"/>
+                            <constraint firstItem="2dt-7Q-VjU" firstAttribute="centerY" secondItem="Hv6-Pj-W5N" secondAttribute="centerY" id="PeO-ZO-ZfI"/>
+                            <constraint firstItem="Kdu-kJ-orC" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="TsE-XD-7Li"/>
+                            <constraint firstItem="mvb-mA-uE7" firstAttribute="centerY" secondItem="Kdu-kJ-orC" secondAttribute="centerY" id="V1X-2B-bpv"/>
+                            <constraint firstItem="wWf-HJ-aeu" firstAttribute="leading" secondItem="2dt-7Q-VjU" secondAttribute="leading" id="ZLh-Fd-8nO"/>
+                            <constraint firstItem="AZy-Xe-13j" firstAttribute="top" secondItem="wWf-HJ-aeu" secondAttribute="bottom" constant="20" id="dAN-oN-1i4"/>
+                            <constraint firstItem="Kdu-kJ-orC" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="16" id="eq4-Hu-0qR"/>
+                            <constraint firstItem="2dt-7Q-VjU" firstAttribute="leading" secondItem="Kdu-kJ-orC" secondAttribute="leading" id="kZK-JF-fZN"/>
+                            <constraint firstItem="wWf-HJ-aeu" firstAttribute="top" secondItem="Hv6-Pj-W5N" secondAttribute="bottom" constant="20" id="lIC-hw-PPV"/>
+                            <constraint firstAttribute="trailing" secondItem="mvb-mA-uE7" secondAttribute="trailing" constant="10" id="o49-cl-fje"/>
+                            <constraint firstItem="mvb-mA-uE7" firstAttribute="leading" secondItem="Kdu-kJ-orC" secondAttribute="trailing" constant="10" id="yUF-lS-Q70"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="logView" destination="AZy-Xe-13j" id="Lbd-6n-UbA"/>
+                        <outlet property="mediaURL" destination="mvb-mA-uE7" id="zQA-7r-nEO"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="136.80000000000001" y="133.5832083958021"/>
         </scene>
     </scenes>
 </document>
