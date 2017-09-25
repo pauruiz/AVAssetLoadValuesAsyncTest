@@ -349,10 +349,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 36J3N28ZZY;
 				INFOPLIST_FILE = AVAssetLoadValuesAsyncTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SKY.AVAssetLoadValuesAsyncTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -363,10 +364,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 36J3N28ZZY;
 				INFOPLIST_FILE = AVAssetLoadValuesAsyncTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SKY.AVAssetLoadValuesAsyncTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -378,6 +380,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 36J3N28ZZY;
 				INFOPLIST_FILE = AVAssetLoadValuesAsyncTestTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SKY.AVAssetLoadValuesAsyncTestTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -394,6 +397,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 36J3N28ZZY;
 				INFOPLIST_FILE = AVAssetLoadValuesAsyncTestTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SKY.AVAssetLoadValuesAsyncTestTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -422,6 +426,7 @@
 				418D83CA1F75164200BC3BFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		418D83CB1F75164200BC3BFF /* Build configuration list for PBXNativeTarget "AVAssetLoadValuesAsyncTestTests" */ = {
 			isa = XCConfigurationList;
@@ -430,6 +435,7 @@
 				418D83CD1F75164200BC3BFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

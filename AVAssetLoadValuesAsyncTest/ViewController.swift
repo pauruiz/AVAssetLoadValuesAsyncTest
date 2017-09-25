@@ -22,11 +22,13 @@ struct AVPlayerKeys {
     static let timedMetadata = "timedMetadata"
 }
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
 
+    var avPlayer: AVPlayer?
+    
     enum Urls:String {
-        case ok = "http://pau.fazerbcn.org/200.php"
-        case ko = "http://pau.fazerbcn.org/403.php"
+        case ok = "http://pau.fazerbcn.org/sky/200.php"
+        case ko = "http://pau.fazerbcn.org/sky/403.php"
     }
     
     @IBOutlet weak var mediaURL: UITextField!
@@ -47,15 +49,50 @@ class ViewController: UIViewController {
         }
         let avAsset:AVURLAsset = AVURLAsset(url: mediaURL)
         
+        avAsset.resourceLoader.setDelegate(self, queue: DispatchQueue.main)
+        
         var error : NSError?
         
+        logView.text = addTimeStamp(message: "Before loadValuesAsynchronously for \(mediaURL)")
         if avAsset.statusOfValue(forKey: AVPlayerKeys.playable, error: &error) == .loaded && avAsset.isPlayable {
-            print("Loaded and playable")
+            addLog(message: "Loaded and playable")
         }
-        self.logView.text = "\(Date()) Before loadValuesAsynchronously"
-        avAsset.loadValuesAsynchronously(forKeys: [AVPlayerKeys.tracks, AVPlayerKeys.playable]) { [weak self] in
-            self?.logView.text = (self?.logView.text ?? "") + "\(Date()) We are in the callback!!!!"
+        avAsset.loadValuesAsynchronously(forKeys: [AVPlayerKeys.tracks, AVPlayerKeys.playable, AVPlayerKeys.duration]) { [weak self] in
+            DispatchQueue.main.async {
+                self?.addLog(message:"We are in the callback!!!!")
+                
+//                switch (tracksStatus) {
+//                case AVKeyValueStatusLoaded:
+//                    [self updateUserInterfaceForDuration];
+//                    break;
+//                case AVKeyValueStatusFailed:
+//                    [self reportError:error forAsset:asset];
+//                    break;
+//                case AVKeyValueStatusCancelled:
+//                    // Do whatever is appropriate for cancelation.
+//                    break;
+//                }
+            }
         }
+        let avPlayerItem = AVPlayerItem(asset: avAsset)
+//        var itemStatusContext = "itemStatusContext"
+//        avPlayerItem.addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions(rawValue: 0), context: &itemStatusContext)
+        avPlayer = AVPlayer(playerItem: avPlayerItem)
+        avPlayer = nil
+        
+    }
+    
+    func addLog(message: String) {
+        var preMessage = ""
+        if self.logView.text != nil  {
+            // TODO -- Add check for empty string
+            preMessage = "\n"
+        }
+        self.logView.text = (self.logView.text ?? "") + preMessage + self.addTimeStamp(message: message)
+    }
+    
+    func addTimeStamp(message: String) -> String {
+        return "\(Date()) - \(message)"
     }
 }
 

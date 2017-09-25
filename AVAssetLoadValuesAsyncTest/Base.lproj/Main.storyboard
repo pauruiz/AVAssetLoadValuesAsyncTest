@@ -4,6 +4,7 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -35,7 +36,7 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hv6-Pj-W5N">
                                 <rect key="frame" x="150" y="75.5" width="154" height="30"/>
-                                <state key="normal" title="Known 404 error page"/>
+                                <state key="normal" title="Known 403 error page"/>
                                 <connections>
                                     <action selector="fillWith403Page:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0ic-G2-M3Q"/>
                                 </connections>
