@@ -25,10 +25,15 @@ struct AVPlayerKeys {
 class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
 
     var avPlayer: AVPlayer?
+    var avPlayerItem: AVPlayerItem?
     
     enum Urls:String {
         case ok = "http://pau.fazerbcn.org/sky/200.php"
         case ko = "http://pau.fazerbcn.org/sky/403.php"
+    }
+    
+    deinit {
+        removeAVPlayerItemObservers()
     }
     
     @IBOutlet weak var mediaURL: UITextField!
@@ -43,6 +48,9 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
     }
     
     @IBAction func tryLoadValuesAsynchronouslyForMedia(_ sender: Any) {
+        
+        removeAVPlayerItemObservers()
+        
         guard let mediaURL = URL(string: self.mediaURL.text ?? "") else {
             self.logView.text = "\(Date()) Invalid or empty URL, we can't continue"
             return
@@ -57,6 +65,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
         if avAsset.statusOfValue(forKey: AVPlayerKeys.playable, error: &error) == .loaded && avAsset.isPlayable {
             addLog(message: "Loaded and playable")
         }
+        
         avAsset.loadValuesAsynchronously(forKeys: [AVPlayerKeys.tracks, AVPlayerKeys.playable, AVPlayerKeys.duration]) { [weak self] in
             DispatchQueue.main.async {
                 self?.addLog(message:"We are in the callback!!!!")
@@ -75,6 +84,10 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
             }
         }
         let avPlayerItem = AVPlayerItem(asset: avAsset)
+        self.avPlayerItem = avPlayerItem
+        addLog(message: "AVPlayerItem initial status: \(avPlayerItemStatusDescription(status: avPlayerItem.status))")
+        addObserver(for: avPlayerItem)
+        
 //        var itemStatusContext = "itemStatusContext"
 //        avPlayerItem.addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions(rawValue: 0), context: &itemStatusContext)
         avPlayer = AVPlayer(playerItem: avPlayerItem)
@@ -93,6 +106,43 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
     
     func addTimeStamp(message: String) -> String {
         return "\(Date()) - \(message)"
+    }
+    
+    func addObserver(for avPlayerItem: AVPlayerItem) {
+        avPlayerItem.addObserver(self, forKeyPath: AVPlayerKeys.status, options: .new, context: nil)
+    }
+    
+    func removeAVPlayerItemObservers() {
+        if let avPlayerItem = self.avPlayerItem {
+            removeObservers(for: avPlayerItem)
+        }
+    }
+    
+    func removeObservers(for avPlayerItem: AVPlayerItem) {
+        avPlayerItem.removeObserver(self, forKeyPath: AVPlayerKeys.status)
+    }
+    
+    func avPlayerItemStatusDescription(status: AVPlayerItemStatus) -> String {
+        switch status {
+            case .failed:
+                return "Failed"
+            case .readyToPlay:
+                return "Ready to play"
+            case .unknown:
+                return "Unknown"
+        }
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == AVPlayerKeys.status {
+            if let avPlayerItem = self.avPlayerItem {
+                let status = avPlayerItemStatusDescription(status: avPlayerItem.status)
+                addLog(message: "Current status: \(status)" )
+            }
+            addLog(message: "PlayerItem status changes, changes: \(String(describing: change))")
+        } else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
     }
 }
 
