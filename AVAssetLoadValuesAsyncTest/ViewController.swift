@@ -50,7 +50,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
         self.mediaURL.text = Urls.ko.rawValue
     }
     
-    @IBAction func tryLoadValuesAsynchronouslyForMedia(_ sender: Any) {
+    @IBAction func tryLoadValuesAsynchronouslyForKey(_ sender: Any) {
         clearEnvironment()
         
         guard let mediaURL = URL(string: self.mediaURL.text ?? "") else {

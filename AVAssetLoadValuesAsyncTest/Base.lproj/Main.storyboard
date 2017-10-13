@@ -51,7 +51,7 @@
                                 <rect key="frame" x="16" y="125.5" width="288" height="30"/>
                                 <state key="normal" title="Try loadValuesAsynchronously for media"/>
                                 <connections>
-                                    <action selector="tryLoadValuesAsynchronouslyForMedia:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zGz-Wf-Vwk"/>
+                                    <action selector="tryLoadValuesAsynchronouslyForKey:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6EF-Dk-4Z5"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mvb-mA-uE7">
