@@ -72,20 +72,22 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
             avAsset.resourceLoader.setDelegate(self, queue: vgDrmAssetLoaderQueue)
         }
         
-        avAsset.loadValuesAsynchronously(forKeys: [AVPlayerKeys.tracks, AVPlayerKeys.playable, AVPlayerKeys.duration]) { [weak self] in
+        avAsset.loadValuesAsynchronously(forKeys: [AVPlayerKeys.tracks, AVPlayerKeys.playable]) { [weak self] in
             DispatchQueue.main.async {
                 self?.addLog(message:"We are in the callback!!!!")
+                let avPlayerItem = AVPlayerItem(asset: avAsset)
+                self?.avPlayerItem = avPlayerItem
+                if let status = self?.avPlayerItem?.status {
+                    self?.addLog(message: "AVPlayerItem initial status: \(String(describing: self?.description(for: status)))")
+                }
+                self?.addObserver(for: avPlayerItem)
+                
+                self?.avPlayer = AVPlayer(playerItem: avPlayerItem)
+                self?.avPlayerViewController = AVPlayerViewController()
+                self?.avPlayerViewController?.player = self?.avPlayer
+                self?.avPlayer?.play()
             }
         }
-        let avPlayerItem = AVPlayerItem(asset: avAsset)
-        self.avPlayerItem = avPlayerItem
-        addLog(message: "AVPlayerItem initial status: \(description(for: avPlayerItem.status))")
-        addObserver(for: avPlayerItem)
-        
-        avPlayer = AVPlayer(playerItem: avPlayerItem)
-        avPlayerViewController = AVPlayerViewController()
-        avPlayerViewController?.player = avPlayer
-        avPlayer?.play()
     }
     
     func addLog(message: String) {
