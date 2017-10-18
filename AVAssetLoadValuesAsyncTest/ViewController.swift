@@ -53,8 +53,9 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
     @IBAction func tryLoadValuesAsynchronouslyForKey(_ sender: Any) {
         clearEnvironment()
         
+        clearLog()
         guard let mediaURL = URL(string: self.mediaURL.text ?? "") else {
-            self.logView.text = "\(Date()) Invalid or empty URL, we can't continue"
+            addLog(message: "\(Date()) Invalid or empty URL, we can't continue")
             return
         }
         let avAsset:AVURLAsset = AVURLAsset(url: mediaURL)
@@ -63,7 +64,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
         
         var error : NSError?
         
-        logView.text = addTimeStamp(message: "Before loadValuesAsynchronously for \(mediaURL)")
+        addLog(message: "Before loadValuesAsynchronously for \(mediaURL)")
         if avAsset.statusOfValue(forKey: AVPlayerKeys.playable, error: &error) == .loaded && avAsset.isPlayable {
             addLog(message: "Loaded and playable")
         }
@@ -95,7 +96,12 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
         if self.logView.text != nil || self.logView.text == "" {
             preMessage = "\n"
         }
+        print(message)
         self.logView.text = (self.logView.text ?? "") + preMessage + self.addTimeStamp(message: message)
+    }
+    
+    func clearLog() {
+        self.logView.text = ""
     }
     
     func addTimeStamp(message: String) -> String {
@@ -108,6 +114,12 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
     
     func clearEnvironment() {
         avPlayer = nil
+        if let avPlayerViewController = avPlayerViewController {
+            avPlayerViewController.player = nil
+            avPlayerViewController.willMove(toParentViewController: nil)
+            avPlayerViewController.view.removeFromSuperview()
+            avPlayerViewController.didMove(toParentViewController: nil)
+        }
         avPlayerViewController = nil
         removeAVPlayerItemObservers()
         avPlayerItem = nil
@@ -152,7 +164,10 @@ extension ViewController {
     
     public func resourceLoader(_ resourceLoader: AVAssetResourceLoader, shouldWaitForLoadingOfRequestedResource loadingRequest: AVAssetResourceLoadingRequest) -> Bool {
         let retVal = false
-        print("ShouldWaitForLoadingRequestedResource returning \(retVal)")
+        DispatchQueue.main.async { [weak self] in
+            self?.addLog(message: "ShouldWaitForLoadingRequestedResource returning \(retVal)")
+        }
         return retVal
     }
 }
+
