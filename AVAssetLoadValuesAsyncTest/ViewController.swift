@@ -23,7 +23,7 @@ struct AVPlayerKeys {
     static let timedMetadata = "timedMetadata"
 }
 
-class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
+class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerViewControllerDelegate {
     fileprivate let vgDrmAssetLoaderQueue = DispatchQueue(label: "drm.assetLoader.queue", attributes: [])
 
     var avPlayer: AVPlayer?
@@ -113,7 +113,6 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate {
     }
     
     func clearEnvironment() {
-        avPlayer = nil
         if let avPlayerViewController = avPlayerViewController {
             avPlayerViewController.player = nil
             avPlayerViewController.willMove(toParentViewController: nil)
@@ -171,3 +170,25 @@ extension ViewController {
     }
 }
 
+// AVPlayerViewControllerDelegate
+extension ViewController {
+    func playerViewControllerDidStartPictureInPicture(_ playerViewController: AVPlayerViewController) {
+        addLog(message: "playerViewControllerDidStartPictureInPicture")
+    }
+
+    func playerViewControllerDidStopPictureInPicture(_ playerViewController: AVPlayerViewController) {
+        addLog(message: "playerViewControllerDidStopPictureInPicture")
+    }
+    
+    func playerViewControllerWillStopPictureInPicture(_ playerViewController: AVPlayerViewController) {
+        addLog(message: "playerViewControllerWillStopPictureInPicture")
+    }
+    
+    func playerViewControllerWillStartPictureInPicture(_ playerViewController: AVPlayerViewController) {
+        addLog(message: "playerViewControllerWillStartPictureInPicture")
+    }
+    
+    func playerViewControllerShouldAutomaticallyDismissAtPictureInPictureStart(_ playerViewController: AVPlayerViewController) -> Bool {
+        return false
+    }
+}
