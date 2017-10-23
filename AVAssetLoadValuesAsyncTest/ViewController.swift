@@ -35,8 +35,10 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
     var avPlayerViewController: AVPlayerViewController?
     
     enum Urls:String {
-        case ok = "http://pau.fazerbcn.org/sky/200.php"
+//        case ok = "http://pau.fazerbcn.org/sky/200.php"
+        case ok = "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"
         case ko = "http://pau.fazerbcn.org/sky/403.php"
+//        case ko = "http://192.168.11.100:50789"
     }
     
     deinit {
