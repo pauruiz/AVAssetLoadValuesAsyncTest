@@ -26,7 +26,11 @@ struct AVPlayerKeys {
 class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerViewControllerDelegate {
     fileprivate let vgDrmAssetLoaderQueue = DispatchQueue(label: "drm.assetLoader.queue", attributes: [])
 
-    var avPlayer: AVPlayer?
+    var avPlayer: AVPlayer? {
+        get {
+            return avPlayerViewController?.player
+        }
+    }
     var avPlayerItem: AVPlayerItem?
     var avPlayerViewController: AVPlayerViewController?
     
@@ -75,18 +79,22 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
         
         avAsset.loadValuesAsynchronously(forKeys: [AVPlayerKeys.tracks, AVPlayerKeys.playable]) { [weak self] in
             DispatchQueue.main.async {
-                self?.addLog(message:"We are in the callback!!!!")
-                let avPlayerItem = AVPlayerItem(asset: avAsset)
-                self?.avPlayerItem = avPlayerItem
-                if let status = self?.avPlayerItem?.status {
-                    self?.addLog(message: "AVPlayerItem initial status: \(String(describing: self?.description(for: status)))")
-                }
-                self?.addObserver(for: avPlayerItem)
+                if let strongSelf = self {
+                    strongSelf.addLog(message:"We are in the callback!!!!")
+                    let avPlayerItem = AVPlayerItem(asset: avAsset)
+                    strongSelf.avPlayerItem = avPlayerItem
+                    strongSelf.addObserver(for: avPlayerItem)
+                    strongSelf.addLog(message: "AVPlayerItem initial status: \(String(describing: strongSelf.description(for: avPlayerItem.status)))")
                 
-                self?.avPlayer = AVPlayer(playerItem: avPlayerItem)
-                self?.avPlayerViewController = AVPlayerViewController()
-                self?.avPlayerViewController?.player = self?.avPlayer
-                self?.avPlayer?.play()
+                    let avPlayer = AVPlayer(playerItem: avPlayerItem)
+                    let avPlayerViewController = AVPlayerViewController()
+                    avPlayerViewController.delegate = self
+                    strongSelf.avPlayerViewController = avPlayerViewController
+                    avPlayerViewController.player = avPlayer
+                    strongSelf.present(avPlayerViewController, animated: true, completion: {
+                        avPlayer.play()
+                    })
+                }
             }
         }
     }
