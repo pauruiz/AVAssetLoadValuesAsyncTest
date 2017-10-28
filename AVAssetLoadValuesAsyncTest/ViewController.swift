@@ -33,12 +33,19 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
     }
     var avPlayerItem: AVPlayerItem?
     var avPlayerViewController: AVPlayerViewController?
-    
+    var baseURL: String {
+        return mediaURL.text ?? ""
+    }
+    var networkTask: URLSessionTask?
+    var shouldWaitReturnValue: Bool {
+        return shouldWaitReturnValueSwitch.isOn
+    }
+
     enum Urls:String {
 //        case ok = "http://pau.fazerbcn.org/sky/200.php"
         case ok = "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"
-        case ko = "http://pau.fazerbcn.org/sky/403.php"
-//        case ko = "http://192.168.11.100:50789"
+//        case ko = "http://pau.fazerbcn.org/sky/403.php"
+        case ko = "http://192.168.12.100:50789"
     }
     
     deinit {
@@ -47,20 +54,43 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
     
     @IBOutlet weak var mediaURL: UITextField!
     @IBOutlet weak var logView: UITextView!
+    @IBOutlet weak var shouldWaitReturnValueSwitch: UISwitch!
     
-    @IBAction func fillWith200Page(_ sender: Any) {
-        self.mediaURL.text = Urls.ok.rawValue
+    @IBAction func clear(_ sender: UIButton) {
+        clearAll()
     }
     
-    @IBAction func fillWith403Page(_ sender: Any) {
-        self.mediaURL.text = Urls.ko.rawValue
+    @IBAction func fillWith200Page(_ sender: UIButton) {
+        mediaURL.text = Urls.ok.rawValue
+    }
+    
+    @IBAction func fillWith403Page(_ sender: UIButton) {
+        mediaURL.text = Urls.ko.rawValue
+    }
+    
+    @IBAction func tryNormalWebCall(_ sender: UIButton) {
+        clearAll()
+        guard let url = URL(string: self.baseURL) else {
+            addLog(message: "Unable to retrieve, URL not valid")
+            return
+        }
+        addLog(message: "Before the connection to \(url) by web task")
+        networkTask = URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
+            DispatchQueue.main.async {
+                guard let strongSelf = self else { return }
+                strongSelf.addLog(message: "In the callback to \(url) by the web task")
+                let body = String(data: data ?? Data(), encoding: String.Encoding.utf8)
+                strongSelf.addLog(message: "HTTP Body: \(String(describing: body))")
+                strongSelf.addLog(message: "HTTP Code Response: \(String(describing: response))")
+                strongSelf.addLog(message: "HTTP Error: \(String(describing: error))")
+            }
+        }
+        networkTask?.resume()
     }
     
     @IBAction func tryLoadValuesAsynchronouslyForKey(_ sender: Any) {
-        clearEnvironment()
-        
-        clearLog()
-        guard let mediaURL = URL(string: self.mediaURL.text ?? "") else {
+        clearAll()
+        guard let mediaURL = URL(string: self.baseURL) else {
             addLog(message: "\(Date()) Invalid or empty URL, we can't continue")
             return
         }
@@ -90,7 +120,11 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
                 
                     let avPlayer = AVPlayer(playerItem: avPlayerItem)
                     let avPlayerViewController = AVPlayerViewController()
-                    avPlayerViewController.delegate = self
+                    if #available(iOS 9.0, *) {
+                        avPlayerViewController.delegate = self
+                    } else {
+                        // Fallback on earlier versions
+                    }
                     strongSelf.avPlayerViewController = avPlayerViewController
                     avPlayerViewController.player = avPlayer
                     strongSelf.present(avPlayerViewController, animated: true, completion: {
@@ -99,6 +133,13 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
                 }
             }
         }
+    }
+    
+    override func viewDidLoad() {
+        clearLog()
+        let initialMessage = "Problem: We are not receiving the callback after a call to the loadValuesAsynchronously method for an AVURLAsset.\nDifferences since iOS10: We receive a call to the shouldWaitForLoadedResource "
+        addLog(message: initialMessage)
+        super.viewDidLoad()
     }
     
     func addLog(message: String) {
@@ -110,6 +151,13 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
         self.logView.text = (self.logView.text ?? "") + preMessage + self.addTimeStamp(message: message)
     }
     
+    func clearAll() {
+        clearLog()
+        
+        clearAVEnvironment()
+        clearNetworkEnvironment()
+    }
+
     func clearLog() {
         self.logView.text = ""
     }
@@ -122,7 +170,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
         avPlayerItem.addObserver(self, forKeyPath: AVPlayerKeys.status, options: .new, context: nil)
     }
     
-    func clearEnvironment() {
+    func clearAVEnvironment() {
         if let avPlayerViewController = avPlayerViewController {
             avPlayerViewController.player = nil
             avPlayerViewController.willMove(toParentViewController: nil)
@@ -132,6 +180,12 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
         avPlayerViewController = nil
         removeAVPlayerItemObservers()
         avPlayerItem = nil
+    }
+    
+    func clearNetworkEnvironment() {
+        guard let task = networkTask else { return }
+        task.cancel()
+        networkTask = nil
     }
     
     func removeAVPlayerItemObservers() {
@@ -172,7 +226,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
 extension ViewController {
     
     public func resourceLoader(_ resourceLoader: AVAssetResourceLoader, shouldWaitForLoadingOfRequestedResource loadingRequest: AVAssetResourceLoadingRequest) -> Bool {
-        let retVal = false
+        let retVal = shouldWaitReturnValue
         DispatchQueue.main.async { [weak self] in
             self?.addLog(message: "ShouldWaitForLoadingRequestedResource returning \(retVal)")
         }
