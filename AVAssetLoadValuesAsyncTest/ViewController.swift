@@ -24,7 +24,7 @@ struct AVPlayerKeys {
 }
 
 class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerViewControllerDelegate {
-    fileprivate let vgDrmAssetLoaderQueue = DispatchQueue(label: "drm.assetLoader.queue", attributes: [])
+    let assetLoaderQueue = DispatchQueue(label: "loader.queue", attributes: [])
 
     var avPlayer: AVPlayer? {
         get {
@@ -76,7 +76,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
         }
         
         if true {
-            avAsset.resourceLoader.setDelegate(self, queue: vgDrmAssetLoaderQueue)
+            avAsset.resourceLoader.setDelegate(self, queue: assetLoaderQueue)
         }
         
         avAsset.loadValuesAsynchronously(forKeys: [AVPlayerKeys.tracks, AVPlayerKeys.playable]) { [weak self] in
