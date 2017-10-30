@@ -40,12 +40,11 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
     var shouldWaitReturnValue: Bool {
         return shouldWaitReturnValueSwitch.isOn
     }
+    var webServer403: WebServer403?
 
     enum Urls:String {
-//        case ok = "http://pau.fazerbcn.org/sky/200.php"
         case ok = "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"
-//        case ko = "http://pau.fazerbcn.org/sky/403.php"
-        case ko = "http://192.168.12.100:50789"
+        case ko = "http://127.0.0.1:5555"
     }
     
     deinit {
@@ -139,6 +138,13 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
         clearLog()
         let initialMessage = "Problem: We are not receiving the callback after a call to the loadValuesAsynchronously method for an AVURLAsset.\nDifferences since iOS10: We receive a call to the shouldWaitForLoadedResource "
         addLog(message: initialMessage)
+        let newWebServer403 = WebServer403()
+        webServer403 = newWebServer403
+        if newWebServer403.listen(port: 5555) {
+            addLog(message: "Listening on port 5555")
+        } else {
+            addLog(message: "Error listening on port 5555")
+        }
         super.viewDidLoad()
     }
     
