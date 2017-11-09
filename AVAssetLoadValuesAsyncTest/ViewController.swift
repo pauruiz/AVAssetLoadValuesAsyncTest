@@ -36,6 +36,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
     var baseURL: String {
         return mediaURL.text ?? ""
     }
+    let initialMessage = "\n\nProblem: When we are on iOS11 we are not getting the KVO notification on the AVPlayerItem with the failure condition after receiving a 403 from the server, we are receiving it on iOS10 or below.\n\nThis program:\n-Try to simulate the process of the DRM running locally, providing the stream to the player from localhost instead of the real encrypted origin\n- Contains a web server on localhost port 5555 that always returns a 403 to any request he receives (and keeping the connection open).\n- Provides a quick way to monitor calls to the loadValuesAsynchronously(forKeys:) (we have experienced problems with no receiving the callback too, but unable to replicate on this App)\n- Provides a quick way to monitor changes on the AVPlayerItem, method we are using to notify the user that an error has been arised\n\nTo replicate:\n1. Pick 'Localhost 403 URL'\n2. Pick on Try loadValuesAsynchronously\n3. Close the player that should open automatically\n4. Read the log box, on iOS11, we are not getting the KVO observer notification, but we are getting it correctly on iOS10 and below"
     var networkTask: URLSessionTask?
     var shouldWaitReturnValue: Bool {
         if Thread.isMainThread {
@@ -142,10 +143,13 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
         }
     }
     
+    @IBAction func viewManual(_ sender: UIButton) {
+        clearLog()
+        addLog(message: initialMessage)
+    }
+    
     override func viewDidLoad() {
         clearLog()
-        let initialMessage = "Problem: We are not receiving the callback after a call to the loadValuesAsynchronously method for an AVURLAsset.\nDifferences since iOS10: We receive a call to the shouldWaitForLoadedResource "
-        addLog(message: initialMessage)
         let newWebServer403 = WebServer403()
         webServer403 = newWebServer403
         if newWebServer403.listen(port: 5555) {
