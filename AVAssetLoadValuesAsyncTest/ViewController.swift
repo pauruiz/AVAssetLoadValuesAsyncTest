@@ -53,7 +53,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
 
     enum Urls:String {
         case ok = "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"
-        case ko = "http://127.0.0.1:5555"
+        case ko = "http://127.0.0.1:5555/trans/CHAN%3Alocator%3A5%3A3%3A7D2/profileAnExample.ts/hn_vod.m3u8?is_manifest=1"
     }
     
     deinit {
