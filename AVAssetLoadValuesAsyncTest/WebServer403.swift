@@ -52,9 +52,9 @@ extension WebServer403: GCDAsyncSocketDelegate {
     }
     
     func socket(_ sock: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
-        if let outputData = "HTTP/1.1 403 Forbidden - 403.2 Resource conflict\nConnection: keep-alive\nContent-Length:  0\n\n".data(using: .utf8) {
+        if let outputData = "HTTP/1.1 403 Forbidden\r\nConnection: keep-alive\r\nContent-Length:  0\r\n\r\n".data(using: .utf8) {
             let string: String = String(data: data, encoding: .utf8) ?? ""
-            print("Web Server: Returned 403 to a incoming data:\n\(string)")
+            print("Web Server: Returning 403 to a incoming data:\n\(string)")
             sock.write(outputData, withTimeout: 120, tag: 0)
             sock.readData(withTimeout: -1, tag: 0)
         }
