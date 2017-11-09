@@ -38,7 +38,15 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
     }
     var networkTask: URLSessionTask?
     var shouldWaitReturnValue: Bool {
-        return shouldWaitReturnValueSwitch.isOn
+        if Thread.isMainThread {
+            return shouldWaitReturnValueSwitch.isOn
+        } else {
+            var buttonValue: Bool = false
+            DispatchQueue.main.sync {
+                 buttonValue = shouldWaitReturnValueSwitch.isOn
+            }
+            return buttonValue
+        }
     }
     var webServer403: WebServer403?
 
@@ -166,6 +174,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
 
     func clearLog() {
         self.logView.text = ""
+        
     }
     
     func addTimeStamp(message: String) -> String {
