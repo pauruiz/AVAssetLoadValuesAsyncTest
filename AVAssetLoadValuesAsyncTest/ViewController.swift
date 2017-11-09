@@ -78,6 +78,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
     
     @IBAction func tryNormalWebCall(_ sender: UIButton) {
         clearAll()
+        showDeviceInfo()
         guard let url = URL(string: self.baseURL) else {
             addLog(message: "Unable to retrieve, URL not valid")
             return
@@ -98,6 +99,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
     
     @IBAction func tryLoadValuesAsynchronouslyForKey(_ sender: Any) {
         clearAll()
+        showDeviceInfo()
         guard let mediaURL = URL(string: self.baseURL) else {
             addLog(message: "\(Date()) Invalid or empty URL, we can't continue")
             return
@@ -238,6 +240,10 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
         } else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
+    }
+    
+    func showDeviceInfo(){
+        addLog(message: "System version: \(UIDevice.current.systemVersion)")
     }
 }
 
