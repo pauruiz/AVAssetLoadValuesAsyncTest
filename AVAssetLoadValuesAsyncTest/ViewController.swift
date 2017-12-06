@@ -36,7 +36,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
     var baseURL: String {
         return mediaURL.text ?? ""
     }
-    let initialMessage = "\n\nProblem: When we are on iOS11 we are not getting the KVO notification on the AVPlayerItem with the failure condition after receiving a 403 from the server, we are receiving it on iOS10 or below.\n\nThis program:\n-Try to simulate the process of the DRM running locally, providing the stream to the player from localhost instead of the real encrypted origin\n- Contains a web server on localhost port 5555 that always returns a 403 to any request he receives (and keeping the connection open).\n- Provides a quick way to monitor calls to the loadValuesAsynchronously(forKeys:) (we have experienced problems with no receiving the callback too, but unable to replicate on this App)\n- Provides a quick way to monitor changes on the AVPlayerItem, method we are using to notify the user that an error has been arised\n\nTo replicate:\n1. Pick 'Localhost 403 URL'\n2. Pick on Try loadValuesAsynchronously\n3. Close the player that should open automatically\n4. Read the log box, on iOS11, we are not getting the KVO observer notification, but we are getting it correctly on iOS10 and below"
+    let initialMessage = "\n\nThe problem:\nWhen we are on iOS11 we are facing two problems after receiving a 403 from the media server (Cisco DRM on localhost) that we are not having on iOS 10 or lower:\n - We are not getting the callback for the loadValuesAsynchronouslyForKeys if we ask for duration of the AVAsset (not a big issue, as the duration is not needed till it is playable, but we should always get a completion call, and by that time, we know that the duration will be 0 as we are never going to be able to play anything)\n - We are not getting the KVO notification on the AVPlayerItem with the failure condition ever (on iOS 11).\n\nThis program:\n - Tries to simulate the process of the Cisco DRM running locally, providing the stream to the player from localhost instead of the real encrypted origin\n - Contains a web server on localhost port 5555 that always returns a 403 to any request he receives (keeping the connection open).\n - Provides some logs to monitor the calls to the loadValuesAsynchronouslyForKeys(forKeys:)\n - Provides some logs to monitor changes on the AVPlayerItem status, KVO we are using to notify the user that an error has been detected and closing the player\n\nTo replicate:\n1. Pick 'Localhost 403 URL'\n2. Pick on Try loadValuesAsynchronouslyForKeys\n3. Close the player that should open automatically\n4. Read the log box, on iOS11, we are not getting the KVO observer notification, but we are getting it correctly on iOS10 and below.\n5. Repeat the process asking for the duration, and now on the logs we should not receive the initial callback for the completion of the loadValuesAsynchronouslyForKeys (that we are receiving on iOS 10 or below)."
     var networkTask: URLSessionTask?
     var shouldWaitReturnValue: Bool {
         if Thread.isMainThread {
@@ -62,6 +62,7 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
     
     @IBOutlet weak var mediaURL: UITextField!
     @IBOutlet weak var logView: UITextView!
+    @IBOutlet weak var shouldAskForDuration: UISwitch!
     @IBOutlet weak var shouldWaitReturnValueSwitch: UISwitch!
     
     @IBAction func clear(_ sender: UIButton) {
@@ -74,6 +75,22 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
     
     @IBAction func fillWith403Page(_ sender: UIButton) {
         mediaURL.text = Urls.ko.rawValue
+    }
+    
+    @IBAction func shouldAskForDurationChanged(_ sender: UISwitch) {
+        if sender.isOn {
+            addLog(message: "We are going to ask for duration, iOS 11 will not come back after asking for Keys asynchronously (completion never called)")
+        } else {
+            addLog(message: "We are not going to ask for duration, completion block for loadingKeys Asynchronously will always be called (fine) (please check the bug about the AVPlayerItem status not set on iOS 11)")
+        }
+    }
+    
+    @IBAction func shouldWaitForLoadingOfRequestedResourceReturnedValueChanged(_ sender: UISwitch) {
+        if sender.isOn {
+            addLog(message: "We will ask to wait, so expect delays to receive a callback (we are waiting so everything is fine)")
+        } else {
+            addLog(message: "We will not ask to wait, so ALL iOS version will be fine on that (please check the bug when asking for duration too)")
+        }
     }
     
     @IBAction func tryNormalWebCall(_ sender: UIButton) {
@@ -106,20 +123,17 @@ class ViewController: UIViewController, AVAssetResourceLoaderDelegate, AVPlayerV
         }
         let avAsset:AVURLAsset = AVURLAsset(url: mediaURL)
         
-        avAsset.resourceLoader.setDelegate(self, queue: DispatchQueue.main)
-        
-        var error : NSError?
-        
         addLog(message: "Before loadValuesAsynchronously for \(mediaURL)")
-        if avAsset.statusOfValue(forKey: AVPlayerKeys.playable, error: &error) == .loaded && avAsset.isPlayable {
-            addLog(message: "Loaded and playable")
+        
+        avAsset.resourceLoader.setDelegate(self, queue: assetLoaderQueue)
+        
+        var keysToAskFor = [AVPlayerKeys.tracks, AVPlayerKeys.playable];
+        
+        if shouldAskForDuration.isOn {
+            keysToAskFor.append(AVPlayerKeys.duration);
         }
         
-        if true {
-            avAsset.resourceLoader.setDelegate(self, queue: assetLoaderQueue)
-        }
-        
-        avAsset.loadValuesAsynchronously(forKeys: [AVPlayerKeys.tracks, AVPlayerKeys.playable]) { [weak self] in
+        avAsset.loadValuesAsynchronously(forKeys: keysToAskFor) { [weak self] in
             DispatchQueue.main.async {
                 if let strongSelf = self {
                     strongSelf.addLog(message:"We are in the callback!!!!")
